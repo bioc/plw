@@ -6,16 +6,16 @@ static double * vect(int n)
     return (double *)R_alloc(n, sizeof(double));
 }
 
-static double ** matrix(int nrh, int nch)
-{
-    int   i;
-    double **m;
-
-    m = (double **) R_alloc((nrh + 1), sizeof(double *));
-    for (i = 0; i <= nrh; i++)
-	m[i] = (double*) R_alloc((nch + 1), sizeof(double));
-    return m;
-}
+//static double ** matrix(int nrh, int nch)
+//{
+//    int   i;
+//    double **m;
+//
+//    m = (double **) R_alloc((nrh + 1), sizeof(double *));
+//    for (i = 0; i <= nrh; i++)
+//	m[i] = (double*) R_alloc((nch + 1), sizeof(double));
+//    return m;
+//}
 
 static double ** Lmatrix(int n)
 {

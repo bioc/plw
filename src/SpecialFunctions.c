@@ -17,7 +17,7 @@ static const int my_incs[16] = {1073790977, 268460033, 67121153, 16783361, 41973
 void getPosteriorMeansAndOdds(double *y,double *tau, double *p0, double *t1, double *t2, 
 double *t3, double *m0, double *v0, int *p, int *n, int *k, int *k0,double *temp, double *post_mean, double *post_odds)
 {
-	int i,j,g;
+	int i,g;
 	double kk,C,s0,temp0;
 	
 	kk=0.0-((*m0)+(*p))*0.5;
@@ -562,7 +562,7 @@ void order_stat_by_index(double *x, int *index, int *q,int *n, int *length_res)
   cur_index=index[first];
 
   while(first<(*n)){
-    while(last<((*n)-1) & index[last+1]==cur_index)
+    while((last<((*n)-1)) & (index[last+1]==cur_index))
       last++;
     temp=(last-first+1);
     res=my_median(&x[first],&temp);
@@ -591,7 +591,7 @@ void median_by_index(double *x, int *index, int *n, int *length_res)
   cur_index=index[first];
 
   while(first<(*n)){
-    while(last<((*n)-1) & index[last+1]==cur_index)
+    while((last<((*n)-1)) & (index[last+1]==cur_index))
       last++;
     temp=(last-first+1);
     res=my_median(&x[first],&temp);
@@ -613,7 +613,7 @@ void mad_by_index(double *x, int *index, int *n, int *length_res)
   cur_index=index[first];
 
   while(first<(*n)){
-    while(last<((*n)-1) & index[last+1]==cur_index)
+    while((last<((*n)-1)) & (index[last+1]==cur_index))
       last++;
     temp=(last-first+1);
     res=my_mad(&x[first],&temp);
@@ -636,7 +636,7 @@ void mean_by_index(double *x, int *index, int *n, int *length_res)
   cur_index=index[first];
 
   while(first<(*n)){
-    while(last<((*n)-1) & index[last+1]==cur_index)
+    while((last<((*n)-1)) & (index[last+1]==cur_index))
       last++;
     temp=(last-first+1);
     res=my_mean(&x[first],&temp);
@@ -659,7 +659,7 @@ void sd_by_index(double *x, int *index, int *n, int *length_res)
   cur_index=index[first];
 
   while(first<(*n)){
-    while(last<((*n)-1) & index[last+1]==cur_index)
+    while((last<((*n)-1)) & (index[last+1]==cur_index))
       last++;
     temp=(last-first+1);
     res=my_sd(&x[first],&temp);
