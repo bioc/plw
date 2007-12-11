@@ -161,10 +161,8 @@ comparing 8 ApoAI knockout mice with 8 normal mice using a set of $n=16$ two-col
 cDNA-arrays. Data was pre-processed as described in \citep{Callow:2000} and
 the analysis presented here is based on the 6068 genes (out of 6226) having no missing values.
 <<echo=TRUE,results=hide>>=
-tempFile<-tempfile("ApoAI")
-download.file(url="http://www.math.chalmers.se/~astrandm/plw/ApoAI.RData",
-              destfile=tempFile)
-load(tempFile)
+source("http://www.math.chalmers.se/~astrandm/plw/GetApoAIdata.R")
+RG<-GetApoAIdata()
 require(limma)
 MA <- normalizeWithinArrays(RG)
 rownames(MA$M)<-MA$genes$Name
