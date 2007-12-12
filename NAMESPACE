@@ -24,6 +24,6 @@ export(medianByIndex)
 export(orderStatByIndex)
 export(sdByIndex)
 export(meanSdByRow)
-
+export(HowToPLW)
 S3method(print,plw)
 S3method(print,topRankSummary)

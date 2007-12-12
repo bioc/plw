@@ -1,4 +1,19 @@
 ## --------------------------------------------------------------------------
+HowToPLW <- function(view=TRUE)
+#	Find and optionally view HowToPLW.pdf
+{
+	f <- system.file("doc","HowToPLW.pdf",package="plw")
+	if(view) {
+		if(.Platform$OS.type == "windows") 
+			shell.exec(f)
+		else
+			system(paste(Sys.getenv("R_PDFVIEWER"),f,"&"))
+	}
+	return(f)
+}
+
+
+## --------------------------------------------------------------------------
 SSdensity<- function(x, m, v, df)
 {
     t <- (1/m)^(-m/2) * v^(m/2) * exp(log(x)* ((df-2)/2) -log(m*v+x) * 
