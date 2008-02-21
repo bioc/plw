@@ -38,7 +38,7 @@ require(plw)
 The {\it affy} package contains functions for reading CEL-file data into an \verb*|AffyBatch| object using the function 
 \verb*|ReadAffy|.
 It also contains functions for doing low-level analysis, such as background correction, normalization, and calculating expression indexes.
-For example, the \verb*|rma| function performs all three steps in one call and returns an \verb*|exprSet| object holding
+For example, the \verb*|rma| function performs all three steps in one call and returns an \verb*|ExpressionSet| object holding
 RMA expression indexes.
 For further details on how to read CEL-file data into R use
 %<<echo=TRUE,results=hide>>=
