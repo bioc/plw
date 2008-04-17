@@ -139,7 +139,7 @@ plotSummaryLog2FC(model1,nGenes=20)
 
 ###---------------------------------------
 # Analyzing with BG-adjusted and normalized PM data
-pm1<-pm(bg.correct.rma2(AffySpikeU95Subset, bgtype = 2))
+pm1<-pm(bg.correct.rma(AffySpikeU95Subset, bgtype = 2))
 pm2<-matrix(.C("qnorm_c", as.double(as.vector(pm1)), 
                as.integer(nrow(pm1)), 
                as.integer(ncol(pm1)))[[1]],

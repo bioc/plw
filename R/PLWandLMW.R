@@ -529,7 +529,7 @@ plw <- function(x, design=rep(1, ncol(x)), contrast=matrix(1),
         if(verbose){
             cat("Background correcting and normalizing.", "\n")
         }
-        pm1<-pm(bg.correct.rma2(x, bgtype = 2))
+        pm1<-pm(bg.correct.rma(x, bgtype = 2))
         rows <- nrow(pm1)
         cols <- ncol(pm1)
         pm1<-log2(matrix(.C("qnorm_c", as.double(as.vector(pm1)),
