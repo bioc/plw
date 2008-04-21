@@ -1,8 +1,8 @@
 Package: plw
 Type: Package
 Title: Probe level Locally moderated Weighted t-tests.
-Version: 0.99.6
-Date: 2008-04-16
+Version: 0.99.7
+Date: 2008-04-21
 Author: Magnus Astrand
 Maintainer: Magnus Astrand <magnus.astrand@astrazeneca.com>
 Description: Probe level Locally moderated Weighted median-t (PLW) and Locally Moderated Weighted-t (LMW).
