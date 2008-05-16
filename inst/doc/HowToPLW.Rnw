@@ -152,69 +152,70 @@ scaleParameterPlot(plwFit)
 \end{figure}
 \clearpage
 
-%---------------------  LMW on --------------
-\section{LMW on two-color microarray data}\label{sect:LMW}
-In \cite{Astrand:2007c} the LMW method is used on RMA expression indexes, and  \verb|example(lmw)|
-shows how to use LMW on Affymetrix or other one-color array data.
-This section demonstrates how to use LMW on the ApoAI data-set \citep{Callow:2000}, 
-comparing 8 ApoAI knockout mice with 8 normal mice using a set of $n=16$ two-color
-cDNA-arrays. Data was pre-processed as described in \citep{Callow:2000} and
-the analysis presented here is based on the 6068 genes (out of 6226) having no missing values.
-<<echo=TRUE,results=hide>>=
-source("http://www.math.chalmers.se/~astrandm/plw/GetApoAIdata.R")
-RG<-GetApoAIdata()
-require(limma)
-MA <- normalizeWithinArrays(RG)
-rownames(MA$M)<-MA$genes$Name
-ii<-apply(is.na(MA$M),1,any)
-MA$A<-MA$A[!ii,]
-MA$M<-MA$M[!ii,]
-@
-Arrays 1 to 8 is the control group with mRNA from normal mice, whereas arrays 9 to 16 are from the knockout group. 
-Thus, we specify a design and contrast matrix for the comparison of knock out mice with the control group of normal mice.
-<<echo=TRUE,results=hide>>=
-design <- cbind("Control-Ref"=1,"KO-Control"=MA$targets$Cy5=="ApoAI KO")
-contrast<-matrix(0:1,ncol=2)
-<<echo=TRUE,print=TRUE>>=
-design
-contrast
-@
-The analysis using LMW is done using the mean intensity of the sum of logged green and red signal, respectively, 
-to model the scale parameter of the inverse-gamma prior for error variances. 
-Also, the spline-knots for the scale-parameter function are set using a set of sample quantiles 
-(10, 30, 50, 70, and the 90\% quantile)
-of the mean intensity instead of the default knots computing using an internal function.
-<<echo=TRUE,results=hide>>=
-meanX<-apply(MA$A,1,mean)
-knots<-quantile(meanX,seq(0.1,0.9,by=0.2))
-lmwFit<-lmw(MA$M,design=design,contrast=contrast,meanX=meanX,knots=knots)
-<<echo=TRUE,print=TRUE>>=
-lmwFit
-@
-From the fitted model we can select the top 10 ranked genes from the analysis, 
-<<echo=TRUE,print=TRUE>>=
-topRankSummary(lmwFit,nGenes=10)
-@
-and inspect the model fit for the inverse-gamma prior together with the estimated scale-parameter curve, see 
-Figures~\ref{varHistPlot2} and \ref{scaleParameterPlot2}, respectively.
-\begin{figure}[htbp]
-  \begin{center}
-<<echo=TRUE,fig=TRUE>>=
-varHistPlot(lmwFit)
-@
-    \caption{Comparing the fitted distribution for $\log(s^2)$ with the observed data from the ApoAI knockout experiment.}\label{varHistPlot2}
-  \end{center}
-\end{figure}
+%%---------------------  LMW on --------------
+%\section{LMW on two-color microarray data}\label{sect:LMW}
+%In \cite{Astrand:2007c} the LMW method is used on RMA expression indexes, and  \verb|example(lmw)|
+%shows how to use LMW on Affymetrix or other one-color array data.
+%This section demonstrates how to use LMW on the ApoAI data-set \citep{Callow:2000}, 
+%comparing 8 ApoAI knockout mice with 8 normal mice using a set of $n=16$ two-color
+%cDNA-arrays. Data was pre-processed as described in \citep{Callow:2000} and
+%the analysis presented here is based on the 6068 genes (out of 6226) having no missing values.
+%<<echo=TRUE,results=hide>>=
+%source("http://www.math.chalmers.se/~astrandm/plw/GetApoAIdata.R")
+%RG<-GetApoAIdata()
+%require(limma)
+%MA <- normalizeWithinArrays(RG)
+%rownames(MA$M)<-MA$genes$Name
+%ii<-apply(is.na(MA$M),1,any)
+%MA$A<-MA$A[!ii,]
+%MA$M<-MA$M[!ii,]
+%@
+%Arrays 1 to 8 is the control group with mRNA from normal mice, whereas arrays 9 to 16 are from the knockout group. 
+%Thus, we specify a design and contrast matrix for the comparison of knock out mice with the control group of normal mice.
+%<<echo=TRUE,results=hide>>=
+%design <- cbind("Control-Ref"=1,"KO-Control"=MA$targets$Cy5=="ApoAI KO")
+%contrast<-matrix(0:1,ncol=2)
+%<<echo=TRUE,print=TRUE>>=
+%design
+%contrast
+%@
+%The analysis using LMW is done using the mean intensity of the sum of logged green and red signal, respectively, 
+%to model the scale parameter of the inverse-gamma prior for error variances. 
+%Also, the spline-knots for the scale-parameter function are set using a set of sample quantiles 
+%(10, 30, 50, 70, and the 90\% quantile)
+%of the mean intensity instead of the default knots computing using an internal function.
+%<<echo=TRUE,results=hide>>=
+%meanX<-apply(MA$A,1,mean)
+%knots<-quantile(meanX,seq(0.1,0.9,by=0.2))
+%lmwFit<-lmw(MA$M,design=design,contrast=contrast,meanX=meanX,knots=knots)
+%<<echo=TRUE,print=TRUE>>=
+%lmwFit
+%@
+%From the fitted model we can select the top 10 ranked genes from the analysis, 
+%<<echo=TRUE,print=TRUE>>=
+%topRankSummary(lmwFit,nGenes=10)
+%@
+%and inspect the model fit for the inverse-gamma prior together with the estimated scale-parameter curve, see 
+%Figures~\ref{varHistPlot2} and \ref{scaleParameterPlot2}, respectively.
+%\begin{figure}[htbp]
+%  \begin{center}
+%<<echo=TRUE,fig=TRUE>>=
+%varHistPlot(lmwFit)
+%@
+%    \caption{Comparing the fitted distribution for $\log(s^2)$ with the observed data from the ApoAI knockout experiment.}\label{varHistPlot2}
+%  \end{center}
+%\end{figure}
+%
+%\begin{figure}[htbp]
+%  \begin{center}
+%<<echo=TRUE,fig=TRUE>>=
+%scaleParameterPlot(lmwFit)
+%@
+%    \caption{Fitted curve for the scale parameter $\nu$ of the inverse-gamma prior from the analysis of the ApoAI data-set.}\label{scaleParameterPlot2}
+%  \end{center}
+%\end{figure}
+%\clearpage
 
-\begin{figure}[htbp]
-  \begin{center}
-<<echo=TRUE,fig=TRUE>>=
-scaleParameterPlot(lmwFit)
-@
-    \caption{Fitted curve for the scale parameter $\nu$ of the inverse-gamma prior from the analysis of the ApoAI data-set.}\label{scaleParameterPlot2}
-  \end{center}
-\end{figure}
-\clearpage
 
 %\bibliographystyle{plainnat}
 %\bibliography{/users/math/astrandm/Latex/bibfile}
