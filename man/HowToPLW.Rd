@@ -22,7 +22,7 @@ This function is used by drop-down Vignettes menu when the Rgui interface for Wi
 }
 
 \seealso{
-\code{\link[utils]{vignette}}, \code{\link[Biobase]{openPDF}}, \code{\link[Biobase]{openVignette}}, \code{\link[base]{Sys.getenv}}, \code{\link[base]{Sys.putenv}}
+\code{\link[utils]{vignette}}, \code{\link[Biobase]{openPDF}}, \code{\link[Biobase]{openVignette}}, \code{\link[base:base-deprecated]{Sys.getenv}}, \code{\link[base:base-deprecated]{Sys.putenv}}
 }
 
 \author{Magnus Astrand}
