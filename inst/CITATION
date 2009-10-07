@@ -5,7 +5,7 @@ citEntry(entry="techreport",
     title = "Empirical bayes models for multiple probe type arrays at the probe level",
     author =  personList(person(first="Magnus",last="{\\AA}strand"),person(first="Petter",last="Mostad"),person(first="Mats",last="Rudemo")),
     address="Goteborg University, Sweden",
-    instituition="Mathematical Sciences, Chalmers University of Technology, and Mathematical Sciences, Goteborg University, Sweden",
+    institution="Mathematical Sciences, Chalmers University of Technology, and Mathematical Sciences, Goteborg University, Sweden",
     year = 2007,
     url="http://www.math.chalmers.se/Math/Research/Preprints/2007/27.pdf",
     textVersion = 

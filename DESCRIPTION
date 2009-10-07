@@ -1,7 +1,7 @@
 Package: plw
 Type: Package
 Title: Probe level Locally moderated Weighted t-tests.
-Version: 1.5.1
+Version: 1.5.2
 Date: 2009-07-22
 Author: Magnus Astrand
 Maintainer: Magnus Astrand <magnus.astrand@astrazeneca.com>
