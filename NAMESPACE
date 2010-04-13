@@ -1,5 +1,14 @@
 useDynLib(plw)
 
+importMethodsFrom(affy, hist, pm, probeNames)
+importFrom(affy, bg.correct.rma)
+importFrom(graphics, abline, axis, box, legend, lines, par, plot,
+           points)
+importFrom(MASS, ginv)
+importFrom(splines, ns)
+importFrom(stats, cov, density, df, lm, mad, median, optim, pt, qnorm,
+           quantile, sd, var)
+
 export(estimateMVbeta)
 export(estimateSigmaMVbeta)
 export(estimateSigmaMV)

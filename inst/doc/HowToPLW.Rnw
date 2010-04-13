@@ -13,61 +13,79 @@
 \maketitle
 
 \section{Introduction}
-This vignette describes how to use {\it plw}, an R implementation of 
-the Probe level Locally moderated Weighted median-t (PLW) method \citep{Astrand:2007c} for finding differentially expressed genes.
-PLW uses an empirical Bayes model taking into account the dependency between variability and intensity-level.
-A global covariance matrix is also used allowing for differing variances between arrays as well as array-to-array correlations,
-and thus PLW performs weighted analysis.
-PLW is specially designed for Affymetrix type arrays (or other multiple-probe arrays). Instead of making inference on probe-set summaries,
-comparisons are made separately for each perfect-match probe and are then summarized into one score for the probe-set. 
-The Locally Moderated Weighted-t (LMW) method, applying the model of PLW on probe-set summaries or data from single probe arrays,
-is also implemented in the {\it plw} package.
+This vignette describes how to use {\it plw}, an R implementation of the Probe
+level Locally moderated Weighted median-t (PLW) method \citep{Astrand:2007c}
+for finding differentially expressed genes. PLW uses an empirical Bayes model
+taking into account the dependency between variability and intensity-level.
+A global covariance matrix is also used allowing for differing variances
+between arrays as well as array-to-array correlations, and thus PLW performs
+weighted analysis. PLW is specially designed for Affymetrix type arrays (or
+other multiple-probe arrays). Instead of making inference on probe-set
+summaries, comparisons are made separately for each perfect-match probe and are
+then summarized into one score for the probe-set. The Locally
+Moderated Weighted-t (LMW) method, applying the model of PLW on probe-set
+summaries or data from single probe arrays, is also implemented in the
+{\it plw} package.
 See \cite{Astrand:2007c} for details on PLW and LMW, and 
-\cite{Kristiansson:2005,Kristiansson:2006}, \cite{Sjogren:2007}, and \cite{Astrand:2007b} for details on weighted analysis for microarrays. 
-PLW is demonstrated in Sections~\ref{sec:data} to \ref{sect:output}, and LMW in Section~\ref{sect:LMW}.
+\cite{Kristiansson:2005,Kristiansson:2006}, \cite{Sjogren:2007}, and
+\cite{Astrand:2007b} for details on weighted analysis for microarrays. 
+PLW is demonstrated in Sections~\ref{sec:data} to \ref{sect:output}, and LMW in
+Section~\ref{sect:LMW}.
 
 \section{Data}\label{sec:data}
-%The R-package {\it plw} depends on a number of other R-packages from the Bioconductor\footnote{http://bioconductor.org/} project or the 
-%the Comprehensive R Archive Network\footnote{http://www.r-project.org/} (CRAN). All packages must be installed to be able to run {\it plw} and
+%The R-package {\it plw} depends on a number of other R-packages from the
+%Bioconductor\footnote{http://bioconductor.org/} project or the 
+%Comprehensive R Archive Network\footnote{http://www.r-project.org/} (CRAN).
+%All packages must be installed to be able to run {\it plw} and
 %they are loaded automatically when loading {\it plw}:
-The R-package {\it plw} depends on the {\it affy} package, available from the Bioconductor\footnote{http://bioconductor.org/} project,
-which is loaded automatically when loading {\it plw}: 
+The R-package {\it plw} depends on the {\it affy} package, available from the
+Bioconductor\footnote{http://bioconductor.org/} project, which is loaded
+automatically when loading {\it plw}: 
 <<echo=TRUE,results=hide>>=
 require(plw)
 @
-The {\it affy} package contains functions for reading CEL-file data into an \verb*|AffyBatch| object using the function 
-\verb*|ReadAffy|.
-It also contains functions for doing low-level analysis, such as background correction, normalization, and calculating expression indexes.
-For example, the \verb*|rma| function performs all three steps in one call and returns an \verb*|ExpressionSet| object holding
-RMA expression indexes.
-For further details on how to read CEL-file data into R use
+The {\it affy} package contains functions for reading CEL-file data into an
+\verb*|AffyBatch| object using the function \verb*|ReadAffy|. It also contains
+functions for doing low-level analysis, such as background correction,
+normalization, and calculating expression indexes. For example, the \verb*|rma|
+function performs all three steps in one call and returns an
+\verb*|ExpressionSet| object holding RMA expression indexes. For further
+details on how to read CEL-file data into R use
 %<<echo=TRUE,results=hide>>=
 \begin{verbatim}
 > help(ReadAffy)
 \end{verbatim}
 
-In this vignette the PLW method is demonstrated using the \verb*|AffySpikeU95Subset| data set of 6 arrays and 1016 probe-sets. 
-The data set was loaded using the \verb*|ReadAffy| function and is included in the {\it plw} package.
-\verb*|AffySpikeU95Subset| is a sub-set of the Affymetrix U95 Latin-Square spike-in data set of 59 arrays and 12626 probe-sets. 
-For these data thera are 16 known differentially expressed genes/probe-sets \cite{Cope:2004}, of which all 16 are included 
-in \verb*|AffySpikeU95Subset|. The data set in loaded using
+In this vignette the PLW method is demonstrated using the
+\verb*|AffySpikeU95Subset| data set of 6 arrays and 1016 probe-sets. The data
+set was loaded using the \verb*|ReadAffy| function and is included in the
+{\it plw} package. \verb*|AffySpikeU95Subset| is a sub-set of the Affymetrix
+U95 Latin-Square spike-in data set of 59 arrays and 12626 probe-sets.
+For these data there are 16 known differentially expressed genes/probe-sets
+\cite{Cope:2004}, of which all 16 are included in
+\verb*|AffySpikeU95Subset|. The data set in loaded using
 <<echo=TRUE,results=hide>>=
 data(AffySpikeU95Subset)
+@
 <<echo=TRUE,print=TRUE>>=
 AffySpikeU95Subset
 @
 \section{Running PLW}
-The \verb*|AffySpikeU95Subset| data set use data from groups a and b of the Affymetrix U95 Latin-Square spike-in data set. Here we 
-show how to do a comparison of these two groups. The fifth letter of the CEL-file names holds the group assignment of each array
-which we can inspect using the \verb*|pData| function
+The \verb*|AffySpikeU95Subset| data set use data from groups a and b of the
+Affymetrix U95 Latin-Square spike-in data set. Here we show how to do a
+comparison of these two groups. The fifth letter of the CEL-file names holds
+the group assignment of each array which we can inspect using the
+\verb*|pData| function
 <<echo=TRUE,print=TRUE>>=
 pData(AffySpikeU95Subset)
 @
-We define a design using the function \verb*|model.matrix|, and a contrast matrix for comparing groups a and b.
+We define a design using the function \verb*|model.matrix|, and a contrast
+matrix for comparing groups a and b.
 <<echo=TRUE,results=hide>>=
 group<-factor(rep(letters[1:2],each=3))
 design<-model.matrix(~group-1)
 contrast<-matrix(c(1,-1),1,2)
+@
 <<echo=TRUE,print=TRUE>>=
 design
 contrast
@@ -75,22 +93,24 @@ contrast
 Now we are ready to use the \verb*|plw| function.
 <<echo=TRUE,results=hide>>=
 plwFit<-plw(AffySpikeU95Subset,design=design,contrast=contrast,epsilon=1e-05)
+@
 <<echo=TRUE,print=TRUE>>=
 plwFit
 @
-From the output we can see that steps 1 and 2 of the procedure used in \verb*|plw| required 
-\Sexpr{plwFit$iter[1]} and \Sexpr{plwFit$iter[2]} iterations, respectively (see \cite{Astrand:2007c} for details of the procedure).
-The estimated value for the $m$-parameter is \Sexpr{round(plwFit$m,3)} and the degrees of freedom for the moderated t-statistics is 
+From the output we can see that steps 1 and 2 of the procedure used in
+\verb*|plw| required \Sexpr{plwFit$iter[1]} and \Sexpr{plwFit$iter[2]}
+iterations, respectively (see \cite{Astrand:2007c} for details of the procedure).
+The estimated value for the $m$-parameter is \Sexpr{round(plwFit$m,3)} and the
+degrees of freedom for the moderated t-statistics is 
 \Sexpr{round(plwFit$dfT,1)}.
 
 \section{Analysing PLW output}\label{sect:output}
 %---------------------  DEGS --------------
-There are three functions for displaying the ranking of probe-sets with respect to differential expression, 
-\verb*|topRankSummary|, \verb*|plotSummaryT|, and \verb*|plotSummaryLog2FC|. All three show results for a given number of top ranking probe-sets 
-(e.g. probe-set ranked 1-20),
-for a specific list of ranks
-(e.g. probe-set ranked 1,5, and 7),
-or for a specific list of probe-sets.
+There are three functions for displaying the ranking of probe-sets with respect
+to differential expression, \verb*|topRankSummary|, \verb*|plotSummaryT|, and
+\verb*|plotSummaryLog2FC|. All three show results for a given number of top
+ranking probe-sets (e.g. probe-set ranked 1-20), for a specific list of ranks
+(e.g. probe-set ranked 1,5, and 7), or for a specific list of probe-sets.
 For example we can display the result for the 16 spiked-in probsets.
 <<echo=TRUE,print=TRUE>>=
 topRankSummary(plwFit,genes=spikedProbesU95)
@@ -104,9 +124,10 @@ Alternatively ,we can display the result for the 20 top ranking probe-sets,
 <<echo=TRUE,print=TRUE>>=
 topRankSummary(plwFit,nGenes=20)
 @
-The other two functions plot individual values for each perfect-match probe togheter with the median value.
-The \verb*|plotSummaryT| plots t-statistics, whereas \verb*|plotSummaryLog2FC| plots logged fold-change values,
-as shown in Figures~\ref{plotT} and \ref{plotFC}, respectively.
+The other two functions plot individual values for each perfect-match probe
+together with the median value. The \verb*|plotSummaryT| plots t-statistics,
+whereas \verb*|plotSummaryLog2FC| plots logged fold-change values, as shown
+in Figures~\ref{plotT} and \ref{plotFC}, respectively.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -127,11 +148,13 @@ plotSummaryLog2FC(plwFit,nGenes=15)
 \clearpage
 
 %---------------------  model fit --------------
-The plw function uses an empirical bayes model with an inverse-gamma prior for the unknown variances, 
-where the scale parameter of the inverse-gamma prior is modeled as a function of mean intensity.
-With the \verb*|varHistPlot| function we can compare the fitted distribution for $\log(s^2)$ with the observed data,
-and with the \verb*|scaleParameterPlot| function we can look at the fitted curve for the scale parameter $\nu$ of the inverse-gamma prior.
-See Figures~\ref{varHistPlot} and \ref{scaleParameterPlot}, respectively.
+The plw function uses an empirical bayes model with an inverse-gamma prior for
+the unknown variances, where the scale parameter of the inverse-gamma prior is
+modeled as a function of mean intensity. With the \verb*|varHistPlot| function
+we can compare the fitted distribution for $\log(s^2)$ with the observed data,
+and with the \verb*|scaleParameterPlot| function we can look at the fitted
+curve for the scale parameter $\nu$ of the inverse-gamma prior. See
+Figures~\ref{varHistPlot} and \ref{scaleParameterPlot}, respectively.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -154,66 +177,73 @@ scaleParameterPlot(plwFit)
 
 %---------------------  LMW on --------------
 \section{LMW on two-color microarray data}\label{sect:LMW}
-In \cite{Astrand:2007c} the LMW method is used on RMA expression indexes, and  \verb|example(lmw)|
-shows how to use LMW on Affymetrix or other one-color array data.
-This section demonstrates how to use LMW on the ApoAI data-set \citep{Callow:2000}, 
-comparing 8 ApoAI knockout mice with 8 normal mice using a set of $n=16$ two-color
-cDNA-arrays. Data was pre-processed as described in \citep{Callow:2000} and
-the analysis presented here is based on the 6068 genes (out of 6226) having no missing values.
-<<echo=TRUE,results=hide>>=
+In \cite{Astrand:2007c} the LMW method is used on RMA expression indexes,
+and \verb|example(lmw)| shows how to use LMW on Affymetrix or other one-color
+array data. This section demonstrates how to use LMW on the ApoAI data-set
+\citep{Callow:2000},  comparing 8 ApoAI knockout mice with 8 normal mice using
+a set of $n=16$ two-color cDNA-arrays. Data was pre-processed as described in
+\citep{Callow:2000} and the analysis presented here is based on the 6068 genes
+(out of 6226) having no missing values.
+<<echo=TRUE,results=hide,eval=FALSE>>=
 source("http://www.math.chalmers.se/~astrandm/plw/GetApoAIdata.R")
-RG<-GetApoAIdata()
+RG <- GetApoAIdata()
 require(limma)
 MA <- normalizeWithinArrays(RG)
-rownames(MA$M)<-MA$genes$Name
-ii<-apply(is.na(MA$M),1,any)
-MA$A<-MA$A[!ii,]
-MA$M<-MA$M[!ii,]
+rownames(MA$M) <- MA$genes$Name
+ii <- apply(is.na(MA$M),1,any)
+MA$A <- MA$A[!ii,]
+MA$M <- MA$M[!ii,]
 @
-Arrays 1 to 8 is the control group with mRNA from normal mice, whereas arrays 9 to 16 are from the knockout group. 
-Thus, we specify a design and contrast matrix for the comparison of knock out mice with the control group of normal mice.
-<<echo=TRUE,results=hide>>=
+Arrays 1 to 8 is the control group with mRNA from normal mice, whereas arrays
+9 to 16 are from the knockout group.  Thus, we specify a design and contrast
+matrix for the comparison of knock out mice with the control group of normal
+mice.
+<<echo=TRUE,results=hide,eval=FALSE>>=
 design <- cbind("Control-Ref"=1,"KO-Control"=MA$targets$Cy5=="ApoAI KO")
-contrast<-matrix(0:1,ncol=2)
-<<echo=TRUE,print=TRUE>>=
+contrast <- matrix(0:1,ncol=2)
+@
+<<echo=TRUE,print=TRUE,eval=FALSE>>=
 design
 contrast
 @
-The analysis using LMW is done using the mean intensity of the sum of logged green and red signal, respectively, 
-to model the scale parameter of the inverse-gamma prior for error variances. 
-Also, the spline-knots for the scale-parameter function are set using a set of sample quantiles 
-(10, 30, 50, 70, and the 90\% quantile)
-of the mean intensity instead of the default knots computing using an internal function.
-<<echo=TRUE,results=hide>>=
-meanX<-apply(MA$A,1,mean)
-knots<-quantile(meanX,seq(0.1,0.9,by=0.2))
-lmwFit<-lmw(MA$M,design=design,contrast=contrast,meanX=meanX,knots=knots)
-<<echo=TRUE,print=TRUE>>=
+The analysis using LMW is done using the mean intensity of the sum of logged
+green and red signal, respectively,  to model the scale parameter of the
+inverse-gamma prior for error variances. Also, the spline-knots for the
+scale-parameter function are set using a set of sample quantiles 
+(10, 30, 50, 70, and the 90\% quantile) of the mean intensity instead of the
+default knots computing using an internal function.
+<<echo=TRUE,results=hide,eval=FALSE>>=
+meanX <- apply(MA$A,1,mean)
+knots <- quantile(meanX,seq(0.1,0.9,by=0.2))
+lmwFit <- lmw(MA$M,design=design,contrast=contrast,meanX=meanX,knots=knots)
+@
+<<echo=TRUE,print=TRUE,eval=FALSE>>=
 lmwFit
 @
 From the fitted model we can select the top 10 ranked genes from the analysis, 
-<<echo=TRUE,print=TRUE>>=
+<<echo=TRUE,print=TRUE,eval=FALSE>>=
 topRankSummary(lmwFit,nGenes=10)
 @
-and inspect the model fit for the inverse-gamma prior together with the estimated scale-parameter curve, see 
-Figures~\ref{varHistPlot2} and \ref{scaleParameterPlot2}, respectively.
-\begin{figure}[htbp]
-  \begin{center}
-<<echo=TRUE,fig=TRUE>>=
-varHistPlot(lmwFit)
-@
-    \caption{Comparing the fitted distribution for $\log(s^2)$ with the observed data from the ApoAI knockout experiment.}\label{varHistPlot2}
-  \end{center}
-\end{figure}
+and inspect the model fit for the inverse-gamma prior together with the
+estimated scale-parameter curve,
+%see Figures~\ref{varHistPlot2} and \ref{scaleParameterPlot2}, respectively.
+%\begin{figure}[htbp]
+%  \begin{center}
+%<<echo=TRUE,fig=TRUE>>=
+%varHistPlot(lmwFit)
+%@
+%    \caption{Comparing the fitted distribution for $\log(s^2)$ with the observed data from the ApoAI knockout experiment.}\label{varHistPlot2}
+%  \end{center}
+%\end{figure}
 
-\begin{figure}[htbp]
-  \begin{center}
-<<echo=TRUE,fig=TRUE>>=
-scaleParameterPlot(lmwFit)
-@
-    \caption{Fitted curve for the scale parameter $\nu$ of the inverse-gamma prior from the analysis of the ApoAI data-set.}\label{scaleParameterPlot2}
-  \end{center}
-\end{figure}
+%\begin{figure}[htbp]
+%  \begin{center}
+%<<echo=TRUE,fig=TRUE>>=
+%scaleParameterPlot(lmwFit)
+%@
+%    \caption{Fitted curve for the scale parameter $\nu$ of the inverse-gamma prior from the analysis of the ApoAI data-set.}\label{scaleParameterPlot2}
+%  \end{center}
+%\end{figure}
 \clearpage
 
 
